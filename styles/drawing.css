@@ -1,0 +1,9 @@
+/* easy reset */
+
+* { margin: 0; padding: 0; }
+
+/* 'grid' */
+.wrapper {
+    margin: 0 auto;
+    width: 90%;
+}
