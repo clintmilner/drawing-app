@@ -1,9 +1,18 @@
 /* easy reset */
-
 * { margin: 0; padding: 0; }
 
-/* 'grid' */
-.wrapper {
+
+.container {
     margin: 0 auto;
-    width: 90%;
+    position: relative;
+}
+.command {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    display: inline;
+}
+.canvasContainer {
+    z-index: 5;
 }
