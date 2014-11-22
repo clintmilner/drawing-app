@@ -13,7 +13,10 @@
             <section class="command">
                 <form id="prompt">
                     <label for="cmd">Insert Commands Here:</label>
-                    <input type="text" name="cmd" id="cmd" />
+                    <input type="text" name="cmd" id="cmd" autofocus autocomplete="off" />
+                    <p>code hint: <span id="hint"></span></p>
+                    <p class="error hidden">error: <span id="errorMsg"></span></p>
+                    <button id="submit">Send Query</button>
                 </form>
             </section>
             <div class="canvasContainer">

@@ -3,7 +3,10 @@ var Paintbrush = (function()
     var canvas = document.getElementById( 'drawing' ),
         ctx = canvas.getContext( '2d' ),
         STROKE_WIDTH = 7,
-        $cmd = $( '#cmd' );
+        commands = [ 'clear', 'circle', 'rectangle', 'line', 'fill'],
+        $error = $( '.error' ),
+        $errorMsg = $( '#errorMsg' );
+
     return {
         init: function()
         {
@@ -11,38 +14,50 @@ var Paintbrush = (function()
             canvas.height = window.innerHeight;
 
             $( document.body )
-                .on( 'keyup', '#cmd', function()
+                .on( 'click', '#submit', function( e ){
+                    if( e !== undefined ){ e.preventDefault(); }
+                    var cmd = $( '#cmd' ).val();
+
+                    Paintbrush.processCommand( cmd );
+                })
+                .on( 'keyup', '#cmd', function( e )
                 {
-                    var commands = [ 'clear', 'circle', 'rectangle', 'line', 'fill'],
-                        cmd = $( this ).val();
-
-                    var check = new RegExp( '\\b' + cmd, 'i' );
-                    var isGoodCmd = check.test( commands );
-
-                    if( isGoodCmd && cmd !== '' )
+                    var cmd = $( this ).val();
+                    if( e.keyCode === 13 && cmd !== '' )
                     {
-                        switch ( cmd ) {
-                            case commands[0]:
-                                $(this ).prop( 'placeholder', 'clear' );
-                                Paintbrush.drawClear( 'lightblue' );
-                            break;
-                            case commands[1]:
-                                Paintbrush.drawCircle( 150, 311, 25, 'goldenrod' );
-                                break;
-                            case commands[2]:
-                                Paintbrush.drawRectangle( 44, 60, 200, 100, '#d87b22' );
-                                break;
-                            case commands[3]:
-                                Paintbrush.drawLine( 25, 100, 160, 400, 'tomato' );
-                                break;
-                            case commands[4]:
-//                              Paintbrush.drawFill( centerX, centerY, 'yellow' );
-                                break;
-                            default:
-                                console.log( cmd );
-                                ctx.clearRect(0, 0, canvas.width, canvas.height)
+                        Paintbrush.processCommand( cmd )
+                    }
+                    else
+                    {
+                        var $hint = $( '#hint' ),
+                            check = new RegExp( '\\b' + cmd, 'i' ),
+                            isGoodCmd = check.test( commands );
+
+                        if( isGoodCmd && cmd !== '' )
+                        {
+                            $hint.text( '' );
+                            switch ( cmd ) {
+                                case commands[0]:
+                                    $hint.text( commands[0] + ' color' );
+                                    break;
+                                case commands[1]:
+                                    $hint.text( commands[1] + ' xPos yPos radius color' );
+                                    break;
+                                case commands[2]:
+                                    $hint.text( commands[2] + ' xPos yPos width height color' );
+                                    break;
+                                case commands[3]:
+                                    $hint.text( commands[3] + ' x1 y1 x2 y2 color' );
+                                    break;
+                                case commands[4]:
+                                    $hint.text( commands[4] + ' xPos yPos color' );
+                                    break;
+                                default:
+                                    ctx.clearRect(0, 0, canvas.width, canvas.height)
+                            }
                         }
                     }
+
                 });
 
         },
@@ -80,23 +95,101 @@ var Paintbrush = (function()
         },
         drawFill: function( x, y, color )
         {
-            //var canvasRatio = canvas.width / canvas.height,
-            //    multiplier = 1;
-            //ctx.beginPath();
-            //setInterval( function(){
-            //    console.log( x );
-            //    console.info( y );
-            //    if( x > 0 || y > 0 )
-            //    {
-            //        ctx.rect( x, y, multiplier*canvasRatio, multiplier*canvasRatio );
-            //        ctx.fillStyle = color;
-            //        ctx.fill();
-            //
-            //        multiplier++;
-            //    }
-            //
-            //}, 100 );
+            var tL = [0,0],
+                bL = [0,canvas.height],
+                tR = [canvas.width, 0],
+                bR = [canvas.width, canvas.height];
+            var w = 50, h = 50, M = 2;
+            ctx.beginPath();
+            setInterval( function(){
+                if( x >= 0 || y >= 0 )
+                {
+                    ctx.rect( x-M, y-M, w*M, h*M );
+                    ctx.fillStyle = color;
+                    ctx.fill();
 
+                    M = M*(M+M);
+                    console.log( M );
+                }
+            }, 100);
+
+
+        },
+        processCommand: function( cmd )
+        {
+            var rawCmd = cmd.split( ' ' );
+            ctx.clearRect(0, 0, canvas.width, canvas.height );
+            switch ( rawCmd[0] ) {
+                case commands[0]:
+                    if( rawCmd.length === 2 )
+                    {
+                        Paintbrush.hideValidation();
+                        Paintbrush.drawClear( rawCmd[1] );
+                    }
+                    else
+                    {
+                        Paintbrush.throwValidation( 'The ' + commands[0] + ' command requires 2 parameters' );
+                    }
+                    break;
+                case commands[1]:
+                    if( rawCmd.length === 5 )
+                    {
+                        Paintbrush.hideValidation();
+                        Paintbrush.drawCircle( rawCmd[1], rawCmd[2], rawCmd[3], rawCmd[4] );
+                    }
+                    else
+                    {
+                        Paintbrush.throwValidation( 'The ' + commands[1] + ' command requires 5 parameters' );
+                    }
+                    break;
+                case commands[2]:
+                    if( rawCmd.length === 6 )
+                    {
+                        Paintbrush.hideValidation();
+                        Paintbrush.drawRectangle( rawCmd[1], rawCmd[2], rawCmd[3], rawCmd[4], rawCmd[5] );                    }
+                    else
+                    {
+                        Paintbrush.throwValidation( 'The ' + commands[2] + ' command requires 6 parameters' );
+                    }
+                    break;
+                case commands[3]:
+                    if( rawCmd.length === 6 )
+                    {
+                        Paintbrush.hideValidation();
+                        Paintbrush.drawLine( rawCmd[1], rawCmd[2], rawCmd[3], rawCmd[4], rawCmd[5] );
+                    }
+                    else
+                    {
+                        Paintbrush.throwValidation( 'The ' + commands[3] + ' command requires 6 parameters')
+                    }
+                    break;
+                case commands[4]:
+                    if( rawCmd.length === 4 )
+                    {
+                        Paintbrush.hideValidation();
+                        Paintbrush.drawFill( rawCmd[1], rawCmd[2], rawCmd[3] );
+                    }
+                    else
+                    {
+                        Paintbrush.throwValidation( 'The ' + commands[4] + ' command requires 4 parameters')
+                    }
+                    break;
+                default:
+                    Paintbrush.hideValidation();
+                    $( '#hint' ).text( 'Command not recognized' );
+                    ctx.clearRect(0, 0, canvas.width, canvas.height );
+            }
+        },
+        throwValidation: function( msg )
+        {
+            $error.removeClass( 'hidden' );
+            $errorMsg.text( msg );
+
+        },
+        hideValidation: function()
+        {
+            $error.addClass( 'hidden' );
+            $errorMsg.text( '' );
         }
     }
 })();

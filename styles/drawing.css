@@ -16,3 +16,7 @@
 .canvasContainer {
     z-index: 5;
 }
+
+.hidden {
+    display: none;
+}
