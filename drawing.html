@@ -5,26 +5,24 @@
     <title>Command line drawing app - Clint Milner (ClintMilner.com)</title>
     <meta name="viewport" content="width=device-width"/>
     <link href="styles/drawing.css" rel="stylesheet">
-
+    <link href='//fonts.googleapis.com/css?family=Source+Code+Pro' rel='stylesheet' type='text/css'>
 </head>
 <body>
-    <div class="wrapper">
-        <div class="container">
-            <section class="command">
-                <form id="prompt">
-                    <label for="cmd">Insert Commands Here:</label>
-                    <input type="text" name="cmd" id="cmd" autofocus autocomplete="off" />
-                    <p>code hint: <span id="hint"></span></p>
-                    <p class="error hidden">error: <span id="errorMsg"></span></p>
-                    <button id="submit">Send Query</button>
-                </form>
-            </section>
-            <div class="canvasContainer">
-                <canvas id="drawing" style="width:100%; height:100%"></canvas>
-            </div>
+    <section class="command">
+        <form id="prompt">
+            <label for="cmd">Insert Commands Here:</label>
+            <input type="text" name="cmd" id="cmd" autofocus autocomplete="off" />
+            <p>code hint: <span id="hint"></span></p>
+            <p class="error hidden">error: <span id="errorMsg"></span></p>
+            <button id="submit">Send Query</button>
+        </form>
+    </section>
+    <div class="container">
+        <div class="canvasContainer">
+            <canvas id="drawing" style="width:100%; height:100%"></canvas>
         </div>
     </div>
-<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+<script src="//code.jquery.com/jquery-2.1.1.min.js"></script>
 <script src="scripts/drawing.js"></script>
 <script>
     Paintbrush.init();

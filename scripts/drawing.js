@@ -2,7 +2,7 @@ var Paintbrush = (function()
 {
     var canvas = document.getElementById( 'drawing' ),
         ctx = canvas.getContext( '2d' ),
-        STROKE_WIDTH = 7,
+        STROKE_WIDTH = 5,
         commands = [ 'clear', 'circle', 'rectangle', 'line', 'fill'],
         $error = $( '.error' ),
         $errorMsg = $( '#errorMsg' );
@@ -36,6 +36,7 @@ var Paintbrush = (function()
                         if( isGoodCmd && cmd !== '' )
                         {
                             $hint.text( '' );
+                            Paintbrush.hideValidation();
                             switch ( cmd ) {
                                 case commands[0]:
                                     $hint.text( commands[0] + ' color' );
@@ -58,8 +59,21 @@ var Paintbrush = (function()
                         }
                     }
 
+                })
+                .on( 'keyup', document.body, function( e )
+                {
+                    if( e !== undefined ){ e.preventDefault(); }
+                    if( e.keyCode === 38 )
+                    {
+                        //close
+                        $( '.command' ).addClass( 'closed' );
+                    }
+                    else if( e.keyCode === 40 )
+                    {
+                        //open
+                        $( '.command' ).removeClass( 'closed' );
+                    }
                 });
-
         },
         drawClear: function( color )
         {
@@ -95,25 +109,21 @@ var Paintbrush = (function()
         },
         drawFill: function( x, y, color )
         {
-            var tL = [0,0],
-                bL = [0,canvas.height],
-                tR = [canvas.width, 0],
-                bR = [canvas.width, canvas.height];
-            var w = 50, h = 50, M = 2;
-            ctx.beginPath();
-            setInterval( function(){
-                if( x >= 0 || y >= 0 )
-                {
-                    ctx.rect( x-M, y-M, w*M, h*M );
-                    ctx.fillStyle = color;
-                    ctx.fill();
+            var w = 50, h = 50, M = 1,
+                timerId = setInterval(
+                    function() {
+                        ctx.beginPath();
+                        ctx.rect( x-M, y-M, w*M, h*M );
+                        ctx.fillStyle = color;
+                        ctx.fill();
 
-                    M = M*(M+M);
-                    console.log( M );
-                }
-            }, 100);
+                        M = M*(M+M);
 
+                        if (M === Infinity) {
+                            clearInterval(timerId);
+                        }
 
+                    }, 100);
         },
         processCommand: function( cmd )
         {
@@ -175,8 +185,8 @@ var Paintbrush = (function()
                     }
                     break;
                 default:
-                    Paintbrush.hideValidation();
-                    $( '#hint' ).text( 'Command not recognized' );
+
+                    Paintbrush.throwValidation( 'Command not recognized' );
                     ctx.clearRect(0, 0, canvas.width, canvas.height );
             }
         },

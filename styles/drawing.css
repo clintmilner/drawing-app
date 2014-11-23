@@ -1,22 +1,37 @@
 /* easy reset */
-* { margin: 0; padding: 0; }
-
-
-.container {
-    margin: 0 auto;
-    position: relative;
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font: 14px/18px 'Source Code Pro', sans-serif;
+    background: #444;
 }
+
 .command {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    z-index: 10;
-    display: inline;
+    width: 100%;
+    padding: 1em;
+    background: rgba( 0, 0, 0, 0.3 );
+    color: #fff;
+    margin-top:0;
+
+    -webkit-transition: margin 0.25s ease-in-out;
+       -moz-transition: margin 0.25s ease-in-out;
+         -o-transition: margin 0.25s ease-in-out;
+            transition: margin 0.25s ease-in-out;
 }
-.canvasContainer {
-    z-index: 5;
+.closed {
+    margin-top: -100px;
 }
 
 .hidden {
     display: none;
+}
+.error {
+    color: #ff6347;
+}
+.wrapper {
+    margin: 0 auto;
+    width: 97%;
+}
+button {
+    border: none;
+    margin: 1em 0 0 0;
 }
